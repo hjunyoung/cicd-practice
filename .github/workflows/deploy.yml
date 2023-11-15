@@ -40,6 +40,9 @@ jobs:
     - run: echo "${{ secrets.APPLICATION }}" > ./src/main/resources/application.properties
     - run: cat ./src/main/resources/application.properties
 
+    - name: Grant execute permission for gradlew
+      run: chmod +x ./gradlew
+
     # 4) gradle 캐싱
     - name: Gradle Caching
       uses: actions/cache@v3
@@ -51,15 +54,12 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-gradle-
 
-    - name: Grant execute permission for gradlew
-      run: chmod +x ./gradlew
-
     # 5) Gradle build (Test 제외)
     - name: Build with Gradle
       uses: gradle/gradle-build-action@v2
       with:
+        gradle-version: 8
         arguments: build
-        gradle-version: 6.5
 
     # 6) AWS 인증 (IAM 사용자 Access Key, Secret Key 활용)
     - name: Configure AWS credentials
